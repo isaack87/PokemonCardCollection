@@ -25,7 +25,7 @@ function CardInfo({clickedID}) {
    <div >{pokemonID
         ? 
         <div>
- ADDD POKEMON
+            YOU CLICKED {pokemonID.name}
     </div>
         : 
         "Loading..."}

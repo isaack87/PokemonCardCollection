@@ -2,14 +2,25 @@
 import './App.module.css';
 import NavBar from '../NavBar/NavBar';
 import Cards from '../Cards/Cards.js';
+import SearchBar from '../Search/Search.js'
 import React, {useState, useEffect} from 'react';
+import styles from './App.module.css'
 
 function App() {
 
 const [pokeData, setPokeData] = useState([])
+const [term, setTerm] = useState(0)
+const [searchActive, setSearchActive] = useState(false)
+const [current, setCurrent] = useState([])
+const [loaded, setLoaded] = useState(true)
+
 
 useEffect(() => {
-  fetchAllPokemon()
+  if (loaded) {
+    fetchAllPokemon()
+    setLoaded(false)
+  }
+ 
 }, []);
 
 function fetchAllPokemon(){
@@ -18,6 +29,7 @@ function fetchAllPokemon(){
     .then(function(allpokemon){
         allpokemon.results.forEach(function(pokemon){
             fetchPokemonDataURL(pokemon);
+
         })
     })
 }
@@ -56,13 +68,34 @@ function fetchPokemonDataURL(pokemon){
     })
 }
 
+  function SearchPokemon(pokemon){
+    setTerm(pokemon)
+    pokeData.map(e => {
+
+      if (e.name.includes(term) && term.length >=4 ) {
+        console.log('found' + term)
+        let currentData = pokeData
+        let current = currentData.slice(e.id-1, e.id)
+        setCurrent(current)
+        setSearchActive(true)
+      } 
+
+      if (term.length <=3) {
+        setSearchActive(false)
+      }
+    })
+  }
 
   return (
 
  
     <div className="App">
-      <h1><NavBar /> </h1>
-      <Cards pokedata={pokeData}/>
+
+
+      <h2><NavBar /> </h2>
+            <h1 className={styles.title}> PokeMon Card Collection </h1>
+      <h1><SearchBar SearchPokemon={SearchPokemon}/></h1>
+      {!searchActive ? <Cards pokedata={pokeData}/> : <Cards pokedata={current}/>}
     </div>
   );
 }
